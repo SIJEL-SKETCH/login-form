@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewpor" content="width=device-width, initial-scale=1.0">
+    <title>Full-stack Login & Register form with User & Admin page | codehal</title>
+    <link rel="stylesheet" href="stylesheet1.css"/>
+</head>
+
+<body>
+
+<div classs="container">
+    <div class="form-box active" id="login-form">
+        <form action="login_register.php">
+            <h2>Login</h2>
+            <input type="email" name="email" placeholder="name" required>
+            <input type="password" name="password" placeholder="password" required>
+            <button type="submit" name="Login">Login</button>
+            <p>Don't have account? <a href="#" onclick="shawForm('Register-form')">Register</a></p>
+            
+        </form>
+    </div>
+
+    <div class="form-box" id="Register-form">
+        <form action="">
+            <h2>Register</h2>
+            <input type="text" name="name" placeholder="name" required>
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="password" required>
+            <select name="role" require> 
+                   <option value="">--Select Role--</option>
+                   <option value="user">User</option>
+                  <option value="admin">Admin</option>
+            </select>
+            <button type="submit" name="register">Register</button>
+            <p>Already have account? <a href="#" onclick="shawForm('login-form')">Login</a></p>
+            
+        </form>
+    </div>
+</div>
+<script src="script.js"></script>
+</body>
+
+</html>
