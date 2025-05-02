@@ -1,44 +1,56 @@
 <?php
-
 session_start();
-require_once 'config.php'; // Corrected casing
+require_once 'config.php';
 
 // === REGISTER SECTION ===
 if (isset($_POST['register'])) {
-    $name = $_POST['name'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT); // Fixed function name and field
+    $name = trim($_POST['name']);
+    $email = trim($_POST['email']);
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
     $role = $_POST['role'];
 
-    $checkEmail = $conn->query("SELECT email FROM users WHERE email = '$email'");
-    if ($checkEmail && $checkEmail->num_rows > 0) {
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
         $_SESSION['register_error'] = 'Email is already registered!';
         $_SESSION['active_form'] = 'register';
     } else {
-        $conn->query("INSERT INTO users (name, email, password, role) 
-                      VALUES ('$name', '$email', '$password', '$role')");
+        $stmt = $conn->prepare("INSERT INTO users (name, email, password, role) VALUES (?, ?, ?, ?)");
+        $stmt->bind_param("ssss", $name, $email, $password, $role);
+        $stmt->execute();
     }
 
+    $stmt->close();
     header("Location: index.php");
     exit();
 }
 
 // === LOGIN SECTION ===
 if (isset($_POST['login'])) {
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
-    $result = $conn->query("SELECT * FROM users WHERE email = '$email'");
+    $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
+    $stmt->bind_param("s", $email);
+    $stmt->execute();
+    $result = $stmt->get_result();
 
     if ($result && $result->num_rows > 0) {
         $user = $result->fetch_assoc();
-
+        
         if (password_verify($password, $user['password'])) {
+            // ✅ Set all necessary session variables
             $_SESSION['name'] = $user['name'];
             $_SESSION['email'] = $user['email'];
+            $_SESSION['role'] = $user['role'];
 
+            // ✅ Route based on role
             if ($user['role'] === 'admin') {
-                header("Location: Admin_page.php");
+                header("Location: admin_page.php");
             } else {
                 header("Location: user_page.php");
             }

@@ -7,8 +7,6 @@ $errors = [
 ];
 $activeform = $_SESSION['active_form'] ?? 'login';
 
-session_unset();
-
 function showError($error) {
     return !empty($error) ? "<p class='error-message'>$error</p>" : '';
 }
@@ -17,52 +15,70 @@ function isActiveForm($formName, $activeForm) {
     return $formName === $activeForm ? 'active' : '';
 }
 ?>
-
-
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewpor" content="width=device-width, initial-scale=1.0">
-    <title>Full-stack Login & Register form with User & Admin page | codehal</title>
-    <link rel="stylesheet" href="stylesheet1.css"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login & Register | Example</title>
+    <link rel="stylesheet" href="stylesheet1.css">
+    <style>
+        .error-message {
+            color: red;
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+        }
+        .form-box {
+            display: none;
+        }
+        .form-box.active {
+            display: block;
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
-    <div class="form-box <?= isActiveform('login', $activeform); ?>" id="login-form">
+    <!-- Login Form -->
+    <div class="form-box <?= isActiveForm('login', $activeform); ?>" id="login-form">
         <form action="login_register.php" method="post">
             <h2>Login</h2>
             <?= showError($errors['login']); ?>
-            <input type="email" name="email" placeholder="name" required>
-            <input type="password" name="password" placeholder="password" required>
-            <button type="submit" name="Login">Login</button>
-            <p>Don't have account? <a href="#" onclick="shawForm('Register-form')">Register</a></p>
-            
+            <input type="email" name="email" placeholder="Email" required>
+            <input type="password" name="password" placeholder="Password" required>
+            <button type="submit" name="login">Login</button>
+            <p>Don't have an account? <a href="#" onclick="showForm('register-form')">Register</a></p>
         </form>
     </div>
 
-    <div class="form-box <?= isActiveform('register', $activeform); ?>" id="Register-form">
+    <!-- Register Form -->
+    <div class="form-box <?= isActiveForm('register', $activeform); ?>" id="register-form">
         <form action="login_register.php" method="post">
             <h2>Register</h2>
             <?= showError($errors['register']); ?>
-            <input type="text" name="name" placeholder="name" required>
+            <input type="text" name="name" placeholder="Name" required>
             <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="password" required>
-            <select name="role" require> 
-                   <option value="">--Select Role--</option>
-                   <option value="user">User</option>
-                  <option value="admin">Admin</option>
+            <input type="password" name="password" placeholder="Password" required>
+            <select name="role" required> 
+                <option value="">--Select Role--</option>
+                <option value="user">User</option>
+                <option value="admin">Admin</option>
             </select>
             <button type="submit" name="register">Register</button>
-            <p>Already have account? <a href="#" onclick="shawForm('login-form')">Login</a></p>
-            
+            <p>Already have an account? <a href="#" onclick="showForm('login-form')">Login</a></p>
         </form>
     </div>
 </div>
-<script src="script.js"></script>
-</body>
 
+<script>
+function showForm(formId) {
+    document.getElementById('login-form').classList.remove('active');
+    document.getElementById('register-form').classList.remove('active');
+    document.getElementById(formId).classList.add('active');
+}
+</script>
+
+</body>
 </html>
+
+<?php session_unset(); ?>
